@@ -1,0 +1,1 @@
+- [스터디 일지 공유 서비스 프로젝트](project-study-log.md) — 라우트 구조, Zod v4 주의사항, 미구현 TODO 목록

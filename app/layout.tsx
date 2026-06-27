@@ -15,8 +15,11 @@ const geistMono = Geist_Mono({
 })
 
 export const metadata: Metadata = {
-  title: "Next.js 스타터 킷",
-  description: "프로덕션 레디 Next.js 스타터 킷 — 빠르게 웹 개발을 시작하세요",
+  title: {
+    default: "스터디 일지 공유",
+    template: "%s | 스터디 일지 공유",
+  },
+  description: "Notion 스터디 일지를 토큰 링크로 간편하게 공유하고 PDF로 저장하세요",
 }
 
 export default function RootLayout({

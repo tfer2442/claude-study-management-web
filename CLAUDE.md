@@ -4,6 +4,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 > **중요:** 이 프로젝트는 Next.js 16.x를 사용합니다. 훈련 데이터와 API·컨벤션이 다를 수 있으므로, 코드 작성 전 반드시 `node_modules/next/dist/docs/`의 관련 가이드를 먼저 확인하고 deprecation 경고를 준수하세요.
 
+## 서비스 개요
+
+**스터디 일지 공유 서비스** — Notion에 작성된 스터디 일지를 토큰 URL로 외부 클라이언트에게 공유하고 PDF 저장을 지원합니다.
+
 ## 명령어
 
 ```bash
@@ -16,20 +20,19 @@ npm run lint     # ESLint 실행
 
 ## 아키텍처
 
-### 라우트 그룹 구조
+### 라우트 구조
 
-App Router의 라우트 그룹으로 레이아웃을 분리합니다:
-
-| 그룹 | 경로 | 레이아웃 |
-|------|------|----------|
+| 그룹/경로 | URL | 레이아웃 |
+|-----------|-----|----------|
 | `(marketing)` | `/` | 마케팅 헤더 + 푸터 |
-| `(auth)` | `/login`, `/register` | 중앙 정렬 카드 |
-| `dashboard` | `/dashboard/**` | 사이드바 + 상단 헤더 |
+| `(admin)` | `/admin` | 중앙 정렬 카드 |
+| `log/[token]` | `/log/:token` | 단독 페이지 |
+| `error` | `/error` | 단독 오류 안내 |
 
 ### 폼 패턴
 
-인증 페이지는 **react-hook-form + zod + shadcn Form** 조합을 표준으로 사용합니다:
-- 스키마 정의: `lib/validations.ts` (`loginSchema`, `registerSchema`)
+**react-hook-form + zod + shadcn Form** 조합을 표준으로 사용합니다:
+- 스키마 정의: `lib/validations.ts` (`passcodeSchema`, `linkCreateSchema`)
 - 폼 컴포넌트: `Form` → `FormField` → `FormItem` → `FormControl` + `FormMessage`
 - 토스트 알림: `sonner`의 `toast.success` / `toast.error`
 
@@ -37,22 +40,37 @@ App Router의 라우트 그룹으로 레이아웃을 분리합니다:
 
 - `components/ui/` — shadcn/ui 원본 컴포넌트 (직접 수정하지 않음)
 - `components/common/` — 재사용 공통 컴포넌트 (`Logo`, `ThemeToggle`, `EmptyState`)
-- `components/layout/` — 레이아웃 전용 (`Sidebar`, `DashboardHeader`, `MarketingHeader`, `Footer`)
+- `components/layout/` — 레이아웃 전용 (`MarketingHeader`, `Footer`)
 - `components/providers/` — 전역 프로바이더 (`ThemeProvider`)
-- `components/sections/` — 마케팅 페이지 섹션 (`HeroSection`, `FeaturesSection`, `CtaSection`)
+- `components/sections/` — 페이지 섹션 컴포넌트
+  - `HeroSection`, `FeaturesSection`, `CTASection` — 랜딩 페이지
+  - `AdminPasscodeForm`, `AdminLinkCreateForm` — 어드민 페이지
+  - `StudyLogViewer` — 일지 열람 페이지
 
 ### 유틸리티
 
 - `lib/utils.ts` — `cn()` (clsx + tailwind-merge)
 - `lib/validations.ts` — Zod 스키마 및 타입 추론
-- `lib/hooks.ts` — usehooks-ts 훅 re-export (직접 구현 없이 라이브러리 활용)
+- `lib/hooks.ts` — usehooks-ts 훅 re-export
+
+### 환경 변수
+
+`.env.example` 참고. 필수 변수:
+- `NOTION_API_KEY` — Notion 인테그레이션 시크릿
+- `NOTION_DB_ID` — 스터디 일지 데이터베이스 ID
+- `ADMIN_PASSCODE` — 어드민 패스코드
+- `SHARE_TOKEN_SECRET` — 토큰 서명 시크릿
+- `NEXT_PUBLIC_BASE_URL` — 서비스 기본 URL
 
 ### 테마
 
-`next-themes`로 시스템 테마를 자동 감지합니다. `app/layout.tsx`의 `ThemeProvider`가 전역 등록되어 있으며, `<html>`에 `suppressHydrationWarning`이 필요합니다 (next-themes 하이드레이션 불일치 방지).
+`next-themes`로 시스템 테마를 자동 감지합니다. `app/layout.tsx`의 `ThemeProvider`가 전역 등록되어 있으며, `<html>`에 `suppressHydrationWarning`이 필요합니다.
 
 Tailwind CSS 4 기반이며, 다크모드 CSS 변수는 `app/globals.css`에 정의됩니다.
 
-### 새 대시보드 페이지 추가 시
+### 주요 패키지
 
-`app/dashboard/<name>/page.tsx`를 생성하면 `layout.tsx`의 사이드바·헤더가 자동 적용됩니다. 사이드바 네비게이션 항목은 `components/layout/sidebar.tsx`의 `navItems` 배열에 추가합니다.
+- `@notionhq/client` — Notion API 클라이언트
+- `@react-pdf/renderer` — PDF 생성
+- `date-fns` + `ko` locale — 한국어 날짜 포맷
+- `react-hook-form` + `zod` — 폼 유효성 검사

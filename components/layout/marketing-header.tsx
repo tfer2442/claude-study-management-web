@@ -14,10 +14,9 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet"
 
+// 마케팅 헤더 네비게이션 링크
 const navLinks = [
   { label: "기능", href: "#features" },
-  { label: "가격", href: "#pricing" },
-  { label: "문서", href: "#docs" },
 ]
 
 export function MarketingHeader() {
@@ -25,7 +24,7 @@ export function MarketingHeader() {
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/80 backdrop-blur-sm">
-      <nav className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4">
+      <nav className="mx-auto flex h-16 max-w-5xl items-center justify-between px-4">
         {/* 로고 */}
         <Logo />
 
@@ -45,8 +44,8 @@ export function MarketingHeader() {
         {/* 우측 액션 영역 */}
         <div className="flex items-center gap-2">
           <ThemeToggle />
-          <Button asChild className="hidden md:inline-flex">
-            <Link href="/dashboard">시작하기</Link>
+          <Button asChild size="sm" className="hidden md:inline-flex">
+            <Link href="/admin">어드민 로그인</Link>
           </Button>
 
           {/* 모바일 메뉴 */}
@@ -74,8 +73,8 @@ export function MarketingHeader() {
                   </Link>
                 ))}
                 <Button asChild className="mt-4">
-                  <Link href="/dashboard" onClick={() => setMobileOpen(false)}>
-                    시작하기
+                  <Link href="/admin" onClick={() => setMobileOpen(false)}>
+                    어드민 로그인
                   </Link>
                 </Button>
               </div>
