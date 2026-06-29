@@ -32,22 +32,14 @@ import {
 } from "@/components/ui/select"
 import { cn } from "@/lib/utils"
 import { linkCreateSchema, type LinkCreateFormValues } from "@/lib/validations"
+import type { StudyLogSummary } from "@/lib/notion-types"
 
-// Notion 일지 목록 임시 타입 (실제 API 연동 시 대체)
-interface NotionEntry {
-  id: string
-  title: string
+interface AdminLinkCreateFormProps {
+  entries: StudyLogSummary[]
 }
 
-// 임시 Notion 일지 목록 — 실제 구현 시 서버 컴포넌트에서 props로 전달
-const MOCK_ENTRIES: NotionEntry[] = [
-  { id: "entry-1", title: "2024년 1월 스터디 일지" },
-  { id: "entry-2", title: "2024년 2월 스터디 일지" },
-  { id: "entry-3", title: "2024년 3월 스터디 일지" },
-]
-
 // 링크 생성 폼 컴포넌트 (패스코드 인증 후 표시)
-export function AdminLinkCreateForm() {
+export function AdminLinkCreateForm({ entries }: AdminLinkCreateFormProps) {
   // 생성된 공유 링크
   const [generatedLink, setGeneratedLink] = useState<string | null>(null)
 
@@ -59,14 +51,25 @@ export function AdminLinkCreateForm() {
     },
   })
 
-  // 공유 링크 생성 처리 (실제 구현은 서버 액션으로 대체 예정)
   const onSubmit = async (values: LinkCreateFormValues) => {
     try {
-      // TODO: 서버 액션으로 토큰 생성 및 링크 반환 구현
-      console.log("링크 생성 요청:", values)
-      const mockToken = crypto.randomUUID()
-      const link = `${window.location.origin}/log/${mockToken}`
-      setGeneratedLink(link)
+      const res = await fetch("/api/links", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          notionEntryId: values.notionEntryId,
+          expiresAt: values.expiresAt.toISOString(),
+        }),
+      })
+
+      if (!res.ok) {
+        const data = await res.json()
+        toast.error(data.error ?? "링크 생성에 실패했습니다")
+        return
+      }
+
+      const { url } = await res.json()
+      setGeneratedLink(url)
       toast.success("공유 링크가 생성되었습니다")
     } catch {
       toast.error("링크 생성에 실패했습니다")
@@ -102,7 +105,7 @@ export function AdminLinkCreateForm() {
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {MOCK_ENTRIES.map((entry) => (
+                      {entries.map((entry) => (
                         <SelectItem key={entry.id} value={entry.id}>
                           {entry.title}
                         </SelectItem>

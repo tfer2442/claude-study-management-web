@@ -18,14 +18,17 @@ import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import {
   passcodeSchema,
-  linkCreateSchema,
   type PasscodeFormValues,
-  type LinkCreateFormValues,
 } from "@/lib/validations"
 import { AdminLinkCreateForm } from "@/components/sections/admin-link-create-form"
+import type { StudyLogSummary } from "@/lib/notion-types"
+
+interface AdminPasscodeFormProps {
+  entries: StudyLogSummary[]
+}
 
 // 어드민 패스코드 인증 → 링크 생성 폼 (2단계 UI)
-export function AdminPasscodeForm() {
+export function AdminPasscodeForm({ entries }: AdminPasscodeFormProps) {
   // 패스코드 인증 완료 여부
   const [isAuthenticated, setIsAuthenticated] = useState(false)
 
@@ -34,21 +37,25 @@ export function AdminPasscodeForm() {
     defaultValues: { passcode: "" },
   })
 
-  // 패스코드 검증 처리 (실제 검증은 서버 액션 또는 API Route로 구현 예정)
   const onSubmit = async (values: PasscodeFormValues) => {
-    try {
-      // TODO: 서버 액션으로 패스코드 검증 구현
-      console.log("패스코드 검증:", values.passcode)
+    const res = await fetch("/api/auth/passcode", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ passcode: values.passcode }),
+    })
+
+    if (res.ok) {
       toast.success("인증되었습니다")
       setIsAuthenticated(true)
-    } catch {
-      toast.error("패스코드가 올바르지 않습니다")
+    } else {
+      const data = await res.json()
+      toast.error(data.error ?? "패스코드가 올바르지 않습니다")
     }
   }
 
   // 인증 완료 후 링크 생성 폼 표시
   if (isAuthenticated) {
-    return <AdminLinkCreateForm />
+    return <AdminLinkCreateForm entries={entries} />
   }
 
   return (

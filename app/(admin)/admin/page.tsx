@@ -1,5 +1,6 @@
 import { Metadata } from "next"
 import { AdminPasscodeForm } from "@/components/sections/admin-passcode-form"
+import { getStudyLogList } from "@/lib/notion"
 
 export const metadata: Metadata = {
   title: "어드민 | 스터디 일지 공유",
@@ -7,7 +8,9 @@ export const metadata: Metadata = {
 }
 
 // 어드민 페이지 — 패스코드 인증 + Notion 일지 선택 + 링크 생성
-export default function AdminPage() {
+export default async function AdminPage() {
+  const entries = await getStudyLogList().catch(() => [])
+
   return (
     <div className="w-full max-w-lg">
       <div className="mb-8 text-center">
@@ -16,7 +19,7 @@ export default function AdminPage() {
           패스코드를 입력하고 공유 링크를 생성하세요
         </p>
       </div>
-      <AdminPasscodeForm />
+      <AdminPasscodeForm entries={entries} />
     </div>
   )
 }
