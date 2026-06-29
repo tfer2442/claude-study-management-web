@@ -1,5 +1,8 @@
 import { Metadata } from "next"
+import { redirect } from "next/navigation"
 import { StudyLogViewer } from "@/components/sections/study-log-viewer"
+import { verifyToken } from "@/lib/token"
+import { getStudyLog } from "@/lib/notion"
 
 export const metadata: Metadata = {
   title: "스터디 일지 | 스터디 일지 공유",
@@ -10,13 +13,24 @@ interface StudyLogPageProps {
   params: Promise<{ token: string }>
 }
 
-// 스터디 일지 열람 페이지 — 토큰 유효성 검증 후 일지 렌더링
 export default async function StudyLogPage({ params }: StudyLogPageProps) {
   const { token } = await params
 
-  return (
-    <div className="min-h-screen bg-background">
-      <StudyLogViewer token={token} />
-    </div>
-  )
+  const payload = await verifyToken(token)
+  if (!payload) {
+    redirect("/error?type=invalid")
+  }
+
+  try {
+    const studyLog = await getStudyLog(payload.pageId)
+    return (
+      <div className="min-h-screen bg-background">
+        <StudyLogViewer log={studyLog} />
+      </div>
+    )
+  } catch (error: unknown) {
+    const isNotFound =
+      error instanceof Error && error.message.includes("object_not_found")
+    redirect(isNotFound ? "/error?type=not_found" : "/error?type=unknown")
+  }
 }

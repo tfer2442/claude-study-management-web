@@ -1,64 +1,94 @@
 "use client"
 
+import { format } from "date-fns"
+import { ko } from "date-fns/locale"
 import { FileDown } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Skeleton } from "@/components/ui/skeleton"
+import type { StudyLog, StudyLogBlock } from "@/lib/notion-types"
 
 interface StudyLogViewerProps {
-  token: string
+  log: StudyLog
+}
+
+function renderBlock(block: StudyLogBlock): React.ReactNode {
+  const children = block.children?.map((child) => renderBlock(child))
+
+  switch (block.type) {
+    case "paragraph":
+      return <p key={block.id} className="mb-4 leading-7">{block.content}</p>
+    case "heading_1":
+      return <h1 key={block.id} className="text-3xl font-bold mt-8 mb-4">{block.content}</h1>
+    case "heading_2":
+      return <h2 key={block.id} className="text-2xl font-semibold mt-6 mb-3">{block.content}</h2>
+    case "heading_3":
+      return <h3 key={block.id} className="text-xl font-semibold mt-5 mb-2">{block.content}</h3>
+    case "bulleted_list_item":
+      return (
+        <li key={block.id} className="ml-6 list-disc mb-1">
+          {block.content}
+          {children && <ul>{children}</ul>}
+        </li>
+      )
+    case "numbered_list_item":
+      return (
+        <li key={block.id} className="ml-6 list-decimal mb-1">
+          {block.content}
+          {children && <ol>{children}</ol>}
+        </li>
+      )
+    case "code":
+      return (
+        <pre key={block.id} className="bg-muted rounded-md p-4 mb-4 overflow-x-auto text-sm">
+          <code data-language={block.language}>{block.content}</code>
+        </pre>
+      )
+    case "image":
+      return (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img key={block.id} src={block.url} alt="" className="rounded-md mb-4 max-w-full" />
+      )
+    case "divider":
+      return <hr key={block.id} className="border-border my-6" />
+    case "quote":
+      return (
+        <blockquote key={block.id} className="border-l-4 border-border pl-4 italic mb-4 text-muted-foreground">
+          {block.content}
+        </blockquote>
+      )
+    case "callout":
+      return (
+        <div key={block.id} className="bg-muted rounded-md p-4 mb-4 border border-border">
+          {block.content}
+        </div>
+      )
+    case "unsupported":
+    default:
+      return null
+  }
 }
 
 // 스터디 일지 열람 컴포넌트
-// 실제 구현 시: 토큰 검증 → Notion API 조회 → 콘텐츠 렌더링
-export function StudyLogViewer({ token }: StudyLogViewerProps) {
-  // TODO: 실제 구현 시 서버 컴포넌트로 변환하여 토큰 검증 및 Notion 데이터 조회
-  // 현재는 뼈대만 제공 (로딩 상태 예시)
-  const isLoading = false
-  const isExpired = false
-
-  if (isLoading) {
-    return (
-      <div className="max-w-3xl mx-auto px-4 py-12 space-y-6">
-        <Skeleton className="h-8 w-2/3" />
-        <Skeleton className="h-4 w-1/3" />
-        <div className="space-y-3 mt-8">
-          <Skeleton className="h-4 w-full" />
-          <Skeleton className="h-4 w-5/6" />
-          <Skeleton className="h-4 w-4/6" />
-        </div>
-      </div>
-    )
-  }
-
+export function StudyLogViewer({ log }: StudyLogViewerProps) {
   return (
     <div className="max-w-3xl mx-auto px-4 py-12">
       {/* 일지 헤더 */}
       <div className="mb-8 space-y-3">
         <div className="flex items-center gap-2">
           <Badge variant="secondary">스터디 일지</Badge>
-          {/* TODO: 만료일 표시 */}
-          <Badge variant="outline" className="text-muted-foreground">
-            2024년 12월 31일 만료
-          </Badge>
         </div>
-        <h1 className="text-3xl font-bold tracking-tight">
-          {/* TODO: Notion 페이지 제목 */}
-          스터디 일지 제목
-        </h1>
+        <h1 className="text-3xl font-bold tracking-tight">{log.title}</h1>
         <p className="text-muted-foreground text-sm">
-          {/* TODO: 작성일 */}
-          작성일: 2024년 1월 1일
+          작성일: {format(log.createdAt, "PPP", { locale: ko })}
         </p>
 
-        {/* PDF 다운로드 버튼 */}
+        {/* PDF 다운로드 버튼 (Phase 4에서 구현) */}
         <Button
           variant="outline"
           size="sm"
           className="mt-2"
           onClick={() => {
-            // TODO: @react-pdf/renderer로 PDF 생성 및 다운로드 구현
-            console.log("PDF 다운로드:", token)
+            console.log("PDF 다운로드:", log.id)
           }}
         >
           <FileDown className="mr-2 h-4 w-4" />
@@ -66,15 +96,11 @@ export function StudyLogViewer({ token }: StudyLogViewerProps) {
         </Button>
       </div>
 
-      {/* 구분선 */}
       <hr className="border-border mb-8" />
 
-      {/* 일지 콘텐츠 영역 */}
-      {/* TODO: Notion 블록 렌더러 구현 */}
+      {/* 일지 콘텐츠 */}
       <article className="prose prose-neutral dark:prose-invert max-w-none">
-        <p className="text-muted-foreground text-sm">
-          Notion 콘텐츠가 여기에 렌더링됩니다. (구현 예정)
-        </p>
+        {log.blocks.map((block) => renderBlock(block))}
       </article>
     </div>
   )
