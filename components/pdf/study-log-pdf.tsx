@@ -15,19 +15,19 @@ import type { StudyLog, StudyLogBlock } from "@/lib/notion-types"
 
 // 한글 폰트 등록 — 나눔고딕 TTF (OFL 라이선스, 크로스플랫폼)
 Font.register({
-  family: "NanumGothic",
+  family: "Pretendard",
   fonts: [
-    { src: "/fonts/NanumGothic-Regular.ttf", fontWeight: 400, fontStyle: "normal" },
-    { src: "/fonts/NanumGothic-Regular.ttf", fontWeight: 400, fontStyle: "italic" },
-    { src: "/fonts/NanumGothic-Bold.ttf", fontWeight: 700, fontStyle: "normal" },
-    { src: "/fonts/NanumGothic-Bold.ttf", fontWeight: 700, fontStyle: "italic" },
+    { src: "/fonts/Pretendard-Regular.ttf", fontWeight: 400, fontStyle: "normal" },
+    { src: "/fonts/Pretendard-Regular.ttf", fontWeight: 400, fontStyle: "italic" },
+    { src: "/fonts/Pretendard-Bold.ttf", fontWeight: 700, fontStyle: "normal" },
+    { src: "/fonts/Pretendard-Bold.ttf", fontWeight: 700, fontStyle: "italic" },
   ],
 })
 
 // 전역 스타일 정의
 const styles = StyleSheet.create({
   page: {
-    fontFamily: "NanumGothic",
+    fontFamily: "Pretendard",
     fontSize: 11,
     paddingTop: 56,
     paddingBottom: 72,
@@ -43,7 +43,7 @@ const styles = StyleSheet.create({
     paddingBottom: 16,
   },
   title: {
-    fontFamily: "NanumGothic",
+    fontFamily: "Pretendard",
     fontWeight: 700,
     fontSize: 24,
     marginBottom: 6,
@@ -59,7 +59,7 @@ const styles = StyleSheet.create({
     lineHeight: 1.7,
   },
   heading1: {
-    fontFamily: "NanumGothic",
+    fontFamily: "Pretendard",
     fontWeight: 700,
     fontSize: 24,
     marginTop: 20,
@@ -67,7 +67,7 @@ const styles = StyleSheet.create({
     color: "#0f172a",
   },
   heading2: {
-    fontFamily: "NanumGothic",
+    fontFamily: "Pretendard",
     fontWeight: 700,
     fontSize: 20,
     marginTop: 16,
@@ -75,7 +75,7 @@ const styles = StyleSheet.create({
     color: "#0f172a",
   },
   heading3: {
-    fontFamily: "NanumGothic",
+    fontFamily: "Pretendard",
     fontWeight: 700,
     fontSize: 16,
     marginTop: 12,
@@ -115,7 +115,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   codeText: {
-    fontFamily: "NanumGothic",
+    fontFamily: "Pretendard",
     fontSize: 10,
     color: "#334155",
     lineHeight: 1.5,

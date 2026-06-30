@@ -1,0 +1,14 @@
+# 텍스트 파일 — 줄바꿈 자동 정규화
+* text=auto
+
+# 바이너리 파일 — CRLF 변환 금지
+*.ttf binary
+*.otf binary
+*.woff binary
+*.woff2 binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.pdf binary
