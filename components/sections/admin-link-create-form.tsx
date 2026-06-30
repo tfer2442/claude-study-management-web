@@ -53,11 +53,13 @@ export function AdminLinkCreateForm({ entries }: AdminLinkCreateFormProps) {
 
   const onSubmit = async (values: LinkCreateFormValues) => {
     try {
+      const notionEntryTitle = entries.find((e) => e.id === values.notionEntryId)?.title
       const res = await fetch("/api/links", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           notionEntryId: values.notionEntryId,
+          notionEntryTitle,
           expiresAt: values.expiresAt.toISOString(),
         }),
       })

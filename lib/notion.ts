@@ -145,6 +145,44 @@ export async function getStudyLog(pageId: string): Promise<StudyLog> {
   }
 }
 
+// Shared Links DB에 공유 링크 기록 저장 (F006)
+export async function saveSharedLink(params: {
+  title: string
+  notionEntryId: string
+  token: string
+  expiresAt: Date
+}): Promise<void> {
+  const databaseId = process.env.NOTION_LINKS_DB_ID
+  const apiKey = process.env.NOTION_API_KEY
+  if (!databaseId || !apiKey) {
+    console.warn("[Notion] NOTION_LINKS_DB_ID 또는 NOTION_API_KEY 미설정, 링크 저장 생략")
+    return
+  }
+
+  const res = await fetch("https://api.notion.com/v1/pages", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${apiKey}`,
+      "Notion-Version": "2022-06-28",
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      parent: { database_id: databaseId },
+      properties: {
+        이름: { title: [{ text: { content: params.title } }] },
+        일지ID: { rich_text: [{ text: { content: params.notionEntryId } }] },
+        토큰: { rich_text: [{ text: { content: params.token } }] },
+        만료일: { date: { start: params.expiresAt.toISOString().split("T")[0] } },
+      },
+    }),
+  })
+
+  if (!res.ok) {
+    const err = await res.json()
+    throw new Error(err.message ?? "Shared Links DB 저장 실패")
+  }
+}
+
 // 스터디 일지 목록 조회 (created_time DESC 정렬)
 export async function getStudyLogList(pageSize = 100): Promise<StudyLogSummary[]> {
   const databaseId = process.env.NOTION_DB_ID
