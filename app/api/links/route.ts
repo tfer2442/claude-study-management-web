@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server"
-import { cookies } from "next/headers"
+import { cookies, headers } from "next/headers"
 import { signToken } from "@/lib/token"
 import { saveSharedLink } from "@/lib/notion"
 
@@ -17,7 +17,12 @@ export async function POST(request: Request) {
 
   const expiresDate = new Date(expiresAt)
   const token = await signToken(notionEntryId, expiresDate)
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ?? "http://localhost:3000"
+
+  // 요청 헤더에서 실제 호스트를 추출 — 환경변수에 의존하지 않아 모든 배포 환경에서 정상 동작
+  const headersList = await headers()
+  const host = headersList.get("host") ?? "localhost:3000"
+  const proto = headersList.get("x-forwarded-proto") ?? "http"
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ?? `${proto}://${host}`
   const url = `${baseUrl}/log/${token}`
 
   // 비차단 방식으로 Shared Links DB에 기록 저장 (실패해도 URL 응답에 영향 없음)
