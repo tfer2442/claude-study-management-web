@@ -460,6 +460,60 @@
       "analysisResult": "Phase 4 PDF 생성 기능 (F004): @react-pdf/renderer v4.5.1 기반으로 StudyLog를 PDF 문서로 변환하는 컴포넌트를 구현하고, StudyLogViewer의 더미 다운로드 버튼을 실제 동작으로 교체한다. 한글 폰트(Noto Sans KR) 등록 필수. Next.js App Router에서 PDFDownloadLink는 SSR 불가이므로 dynamic import + ssr:false 패턴 사용.",
       "summary": "pdf-download-button.tsx 신규 생성 완료 (PDFDownloadLink + StudyLogDocument 조합, loading 상태 표시, 파일명 스터디일지_제목_날짜.pdf 포맷 적용). study-log-viewer.tsx 더미 버튼 제거 후 dynamic import(ssr:false)로 PdfDownloadButton 교체 완료. npm run build TypeScript 오류 없이 통과. Playwright E2E 테스트에서 /log/[token] 페이지에 PDF 다운로드 버튼 렌더링 확인 및 클릭 동작 검증 완료.",
       "completedAt": "2026-06-30T12:38:00.778Z"
+    },
+    {
+      "id": "ea73a913-d34a-4646-ba8b-68a792b086c0",
+      "name": "Task 016: 품질 점검 및 최적화",
+      "description": "프로덕션 배포 전 품질 점검을 수행한다.\n1. next.config.ts에 Notion 이미지 도메인 허용 (images.remotePatterns)\n2. app/log/[token]/page.tsx에 ISR revalidate 설정 (1시간)\n3. app/error.tsx 에러 바운더리 컴포넌트 생성 (use client, reset 버튼)\n4. npm run build로 프로덕션 빌드 성공 확인",
+      "status": "completed",
+      "dependencies": [],
+      "createdAt": "2026-06-30T13:12:43.757Z",
+      "updatedAt": "2026-06-30T13:13:56.740Z",
+      "relatedFiles": [
+        {
+          "path": "next.config.ts",
+          "type": "TO_MODIFY",
+          "description": "이미지 도메인 허용 설정"
+        },
+        {
+          "path": "app/log/[token]/page.tsx",
+          "type": "TO_MODIFY",
+          "description": "ISR revalidate 추가"
+        },
+        {
+          "path": "app/error.tsx",
+          "type": "CREATE",
+          "description": "App Router 에러 바운더리"
+        }
+      ],
+      "implementationGuide": "1. next.config.ts 수정:\n   images.remotePatterns에 prod.files.notion.com, s3.us-west-2.amazonaws.com, s3-us-west-2.amazonaws.com 추가\n2. app/log/[token]/page.tsx:\n   export const revalidate = 3600 추가\n3. app/error.tsx 신규 생성:\n   'use client'\n   export default function Error({ error, reset }) { return <div>오류 안내 UI + reset 버튼</div> }\n4. npm run build 실행 → 성공 확인",
+      "verificationCriteria": "npm run build 성공, app/error.tsx 존재, next.config.ts에 remotePatterns 추가됨",
+      "analysisResult": "Phase 5 목표: 프로덕션 빌드 검증, 품질 점검(캐싱·에러 바운더리·이미지 도메인), Vercel 배포 및 최종 E2E 스모크 테스트. Next.js 16.x App Router 기반, Vercel 플랫폼 배포.",
+      "summary": "next.config.ts에 Notion 이미지 도메인 3개 추가, app/log/[token]/page.tsx에 revalidate=3600 ISR 설정, app/error.tsx 에러 바운더리 생성 완료. npm run build 성공 — /admin은 Notion API fetch로 인해 정상적으로 동적(ƒ) 렌더링, /log/[token]도 동적 렌더링으로 처리됨.",
+      "completedAt": "2026-06-30T13:13:56.733Z"
+    },
+    {
+      "id": "0d02e42f-67c7-4042-aab4-9b16dc8fa138",
+      "name": "Task 017: Vercel 배포 및 환경 구성",
+      "description": "Vercel에 프로젝트를 배포하고 환경변수를 등록한 뒤 최종 E2E 스모크 테스트를 수행한다.\n필요 환경변수: NOTION_API_KEY, NOTION_DB_ID, NOTION_LINKS_DB_ID, ADMIN_PASSCODE, SHARE_TOKEN_SECRET, NEXT_PUBLIC_BASE_URL\n배포 후 Playwright MCP로 프로덕션 URL 기반 스모크 테스트 수행.",
+      "status": "pending",
+      "dependencies": [
+        {
+          "taskId": "ea73a913-d34a-4646-ba8b-68a792b086c0"
+        }
+      ],
+      "createdAt": "2026-06-30T13:12:43.757Z",
+      "updatedAt": "2026-06-30T13:12:43.757Z",
+      "relatedFiles": [
+        {
+          "path": "docs/ROADMAP.md",
+          "type": "TO_MODIFY",
+          "description": "Phase 5 완료 표시"
+        }
+      ],
+      "implementationGuide": "1. Vercel 배포 (사용자 직접 수행 또는 GitHub 자동 연동)\n   - vercel.com에서 GitHub 저장소 import\n   - 환경변수 6개 등록\n   - NEXT_PUBLIC_BASE_URL = 배포된 Vercel URL\n2. 배포 완료 후 Playwright MCP로 스모크 테스트:\n   - 랜딩 페이지 접속 확인\n   - /admin 어드민 로그인 → 링크 생성 확인\n   - /log/[token] 일지 열람 확인\n   - PDF 다운로드 버튼 렌더링 확인\n3. ROADMAP.md Phase 5 완료 표시 업데이트",
+      "verificationCriteria": "Vercel 배포 URL에서 전체 기능 정상 동작, Playwright 스모크 테스트 통과, ROADMAP.md Phase 5 완료 표시",
+      "analysisResult": "Phase 5 목표: 프로덕션 빌드 검증, 품질 점검(캐싱·에러 바운더리·이미지 도메인), Vercel 배포 및 최종 E2E 스모크 테스트. Next.js 16.x App Router 기반, Vercel 플랫폼 배포."
     }
   ]
 }

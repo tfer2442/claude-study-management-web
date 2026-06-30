@@ -28,10 +28,17 @@ function mapPageToSummary(
       ? titleProp.title.map((t) => t.plain_text).join("")
       : "제목 없음"
 
+  const tagProp = page.properties["태그"]
+  const tags =
+    tagProp?.type === "multi_select"
+      ? tagProp.multi_select.map((t: { name: string }) => t.name)
+      : []
+
   return {
     id: page.id,
     title,
     createdAt: new Date(page.created_time),
+    tags,
   }
 }
 
@@ -116,6 +123,12 @@ export async function getStudyLog(pageId: string): Promise<StudyLog> {
         ? titleProp.title.map((t) => t.plain_text).join("")
         : "제목 없음"
 
+    const tagProp = page.properties["태그"]
+    const tags =
+      tagProp?.type === "multi_select"
+        ? tagProp.multi_select.map((t: { name: string }) => t.name)
+        : []
+
     // 블록 전체 조회 (페이지네이션)
     const allBlocks: BlockObjectResponse[] = []
     let cursor: string | undefined
@@ -137,6 +150,7 @@ export async function getStudyLog(pageId: string): Promise<StudyLog> {
       title,
       createdAt: new Date(page.created_time),
       lastEditedAt: new Date(page.last_edited_time),
+      tags,
       blocks,
     }
   } catch (error) {

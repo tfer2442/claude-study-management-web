@@ -32,6 +32,7 @@ export interface StudyLogSummary {
   id: string
   title: string
   createdAt: Date
+  tags: string[]
 }
 
 // 일지 단건 조회용 전체 타입

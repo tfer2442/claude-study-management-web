@@ -10,7 +10,7 @@ export function Footer() {
           <div className="space-y-1">
             <Logo />
             <p className="text-sm text-muted-foreground">
-              Notion 기반 스터디 일지 공유 서비스
+              Notion 기반 문서 공유 서비스
             </p>
           </div>
         </div>
@@ -18,7 +18,7 @@ export function Footer() {
         <Separator className="my-6" />
 
         <div className="text-center text-sm text-muted-foreground">
-          © {new Date().getFullYear()} 스터디 일지 공유. All rights reserved.
+          © {new Date().getFullYear()} 문서 공유. All rights reserved.
         </div>
       </div>
     </footer>

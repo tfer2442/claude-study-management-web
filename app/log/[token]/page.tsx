@@ -7,8 +7,8 @@ import { getStudyLog } from "@/lib/notion"
 export const revalidate = 3600
 
 export const metadata: Metadata = {
-  title: "스터디 일지 | 스터디 일지 공유",
-  description: "공유된 스터디 일지를 열람합니다",
+  title: "문서 | 문서 공유",
+  description: "공유된 문서를 열람합니다",
 }
 
 interface StudyLogPageProps {

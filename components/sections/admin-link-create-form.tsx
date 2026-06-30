@@ -99,7 +99,7 @@ export function AdminLinkCreateForm({ entries }: AdminLinkCreateFormProps) {
               name="notionEntryId"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>스터디 일지 선택</FormLabel>
+                  <FormLabel>문서 선택</FormLabel>
                   <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl>
                       <SelectTrigger>

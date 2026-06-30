@@ -16,10 +16,10 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: "스터디 일지 공유",
-    template: "%s | 스터디 일지 공유",
+    default: "문서 공유",
+    template: "%s | 문서 공유",
   },
-  description: "Notion 스터디 일지를 토큰 링크로 간편하게 공유하고 PDF로 저장하세요",
+  description: "Notion 문서를 토큰 링크로 간편하게 공유하고 PDF로 저장하세요",
 }
 
 export default function RootLayout({

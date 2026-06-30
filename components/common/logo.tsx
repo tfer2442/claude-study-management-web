@@ -8,7 +8,7 @@ export function Logo() {
       <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
         <BookOpen className="h-4 w-4" />
       </div>
-      <span>스터디 일지</span>
+      <span>문서 공유</span>
     </Link>
   )
 }

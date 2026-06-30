@@ -4,7 +4,7 @@ import { AlertTriangle } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
 export const metadata: Metadata = {
-  title: "오류 | 스터디 일지 공유",
+  title: "오류 | 문서 공유",
   description: "요청을 처리하는 중 오류가 발생했습니다",
 }
 
@@ -23,7 +23,7 @@ const ERROR_MESSAGES: Record<ErrorType, { title: string; description: string }> 
   },
   not_found: {
     title: "일지를 찾을 수 없습니다",
-    description: "해당 스터디 일지가 존재하지 않거나 삭제되었습니다.",
+    description: "해당 문서가 존재하지 않거나 삭제되었습니다.",
   },
   invalid: {
     title: "유효하지 않은 링크입니다",

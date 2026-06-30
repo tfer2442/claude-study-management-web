@@ -87,9 +87,13 @@ export function StudyLogViewer({ log }: StudyLogViewerProps) {
     <div className="max-w-3xl mx-auto px-4 py-12">
       {/* 일지 헤더 */}
       <div className="mb-8 space-y-3">
-        <div className="flex items-center gap-2">
-          <Badge variant="secondary">스터디 일지</Badge>
-        </div>
+        {log.tags.length > 0 && (
+          <div className="flex items-center gap-2 flex-wrap">
+            {log.tags.map((tag) => (
+              <Badge key={tag} variant="secondary">{tag}</Badge>
+            ))}
+          </div>
+        )}
         <h1 className="text-3xl font-bold tracking-tight">{log.title}</h1>
         <p className="text-muted-foreground text-sm">
           작성일: {format(log.createdAt, "PPP", { locale: ko })}

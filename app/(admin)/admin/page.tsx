@@ -3,8 +3,8 @@ import { AdminPasscodeForm } from "@/components/sections/admin-passcode-form"
 import { getStudyLogList } from "@/lib/notion"
 
 export const metadata: Metadata = {
-  title: "어드민 | 스터디 일지 공유",
-  description: "패스코드 인증 후 스터디 일지 공유 링크를 생성합니다",
+  title: "어드민 | 문서 공유",
+  description: "패스코드 인증 후 문서 공유 링크를 생성합니다",
 }
 
 // 어드민 페이지 — 패스코드 인증 + Notion 일지 선택 + 링크 생성

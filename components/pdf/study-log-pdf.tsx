@@ -279,7 +279,7 @@ export function StudyLogDocument({ log }: { log: StudyLog }) {
   })
 
   return (
-    <Document title={log.title} author="스터디 일지 공유 서비스">
+    <Document title={log.title} author="문서 공유 서비스">
       <Page size="A4" style={styles.page}>
         {/* 헤더: 제목 + 날짜 */}
         <View style={styles.header} fixed>
