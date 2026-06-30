@@ -1,11 +1,24 @@
 "use client"
 
+import dynamic from "next/dynamic"
 import { format } from "date-fns"
 import { ko } from "date-fns/locale"
-import { FileDown } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import type { StudyLog, StudyLogBlock } from "@/lib/notion-types"
+
+// PDF 다운로드 버튼 — SSR 불가로 dynamic import 사용
+const PdfDownloadButton = dynamic(
+  () => import("@/components/pdf/pdf-download-button"),
+  {
+    ssr: false,
+    loading: () => (
+      <Button variant="outline" size="sm" className="mt-2" disabled>
+        준비 중...
+      </Button>
+    ),
+  }
+)
 
 interface StudyLogViewerProps {
   log: StudyLog
@@ -82,18 +95,8 @@ export function StudyLogViewer({ log }: StudyLogViewerProps) {
           작성일: {format(log.createdAt, "PPP", { locale: ko })}
         </p>
 
-        {/* PDF 다운로드 버튼 (Phase 4에서 구현) */}
-        <Button
-          variant="outline"
-          size="sm"
-          className="mt-2"
-          onClick={() => {
-            console.log("PDF 다운로드:", log.id)
-          }}
-        >
-          <FileDown className="mr-2 h-4 w-4" />
-          PDF 다운로드
-        </Button>
+        {/* PDF 다운로드 버튼 — dynamic import로 클라이언트 전용 렌더링 */}
+        <PdfDownloadButton log={log} />
       </div>
 
       <hr className="border-border mb-8" />
