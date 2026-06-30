@@ -4,6 +4,8 @@ import { StudyLogViewer } from "@/components/sections/study-log-viewer"
 import { verifyToken } from "@/lib/token"
 import { getStudyLog } from "@/lib/notion"
 
+export const revalidate = 3600
+
 export const metadata: Metadata = {
   title: "스터디 일지 | 스터디 일지 공유",
   description: "공유된 스터디 일지를 열람합니다",
